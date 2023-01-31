@@ -11,7 +11,7 @@ from .models import Menu, Booking, MenuItem
 from .serializers import MenuItemSerializer, BookingSerializer, MenuSerializer
 
 # Create your views here. 
-class MenuItemsView(generics.ListCreateAPIView):
+class MenuView(generics.ListCreateAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
 
@@ -19,10 +19,17 @@ class SingleMenuView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
 
-class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+class MenuItemView(generics.ListCreateAPIView, generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
+    
+class SingleMenuItemView(generics.ListAPIView, generics.DestroyAPIView, generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
+    def get(self, request, pk):
+        return Response(MenuItemSerializer(MenuItem.objects.get(pk=pk)).data)
 
 
 class BookingView(ModelViewSet):
